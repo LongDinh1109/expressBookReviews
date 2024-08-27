@@ -56,31 +56,41 @@ public_users.get('/isbn/:isbn', async function (req, res) {
   const bookDetailsByIsbn = await getDetailsByIsbn(isbn);
   return res.send(bookDetailsByIsbn);
  });
-  
-// Get book details based on author
-public_users.get('/author/:author',function (req, res) {
-  //Write your code here
-  const author = req.params.author;
-  const isbnList = Object.keys(books);
+
+ async function getBookDetailsByAuthor(author,isbnList) {
   let booksFilteredByAuthor = {
     "booksbyauthor": []
   };
-
-  
-  for (let i = 0; i < isbnList.length; i++){
-    const isnb = isbnList[i];
-    const book = books[isnb];
-    if(book.author === author){
-      const newBook = {
-        "isbn" : isnb,
-        "title" : book.title,
-        "review" : book.reviews
-      }
-      booksFilteredByAuthor["booksbyauthor"].push(newBook);
-    }
+  try {
+    return new Promise((resolve)=>{
+      setTimeout(() => {        
+        for (let i = 0; i < isbnList.length; i++){
+          const isnb = isbnList[i];
+          const book = books[isnb];
+          if(book.author === author){
+            const newBook = {
+              "isbn" : isnb,
+              "title" : book.title,
+              "review" : book.reviews
+            }
+            booksFilteredByAuthor["booksbyauthor"].push(newBook);
+          }
+        }
+        resolve(booksFilteredByAuthor)
+      }, 6000);
+    })
+  }catch(err){
+    console.error('Error posting data:', err); 
   }
-
-  return res.send(booksFilteredByAuthor);
+ }
+  
+// Get book details based on author
+public_users.get('/author/:author',async function (req, res) {
+  //Write your code here
+  const author = req.params.author;
+  const isbnList = Object.keys(books);
+  const bookDetailsByAuthor = await getBookDetailsByAuthor(author,isbnList);
+  return res.send(bookDetailsByAuthor);
 });
 
 // Get all books based on title
