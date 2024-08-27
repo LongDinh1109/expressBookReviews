@@ -37,11 +37,24 @@ public_users.get('/',function (req, res) {
   })
 });
 
+async function getDetailsByIsbn(isbn){
+  try {
+    return new Promise((resolve)=>{
+      setTimeout(() => {
+        resolve(books[isbn])
+      },6000)
+    })
+  } catch (error) {
+    console.error('Error posting data:', error); 
+  }
+} ;
+
 // Get book details based on ISBN
-public_users.get('/isbn/:isbn',function (req, res) {
+public_users.get('/isbn/:isbn', async function (req, res) {
   //Write your code here
   const isbn = req.params.isbn;
-  return res.send(books[isbn]);
+  const bookDetailsByIsbn = await getDetailsByIsbn(isbn);
+  return res.send(bookDetailsByIsbn);
  });
   
 // Get book details based on author
