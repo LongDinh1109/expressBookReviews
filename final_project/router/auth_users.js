@@ -49,9 +49,19 @@ regd_users.put("/auth/review/:isbn", (req, res) => {
     reviews[user] = newReview;
     return res.status(200).json({message: "Your review has been added/edited!"})
   } 
-  return res.status(200).json({message: "Your review has been added/edited!"})
 
 });
+
+regd_users.delete("/auth/review/:isbn", (req, res) => {
+  const isbn = req.params.isbn;
+  const reviews = books[isbn].reviews;
+  const user = req.session.authorization['username'];
+  if(reviews[user]){
+    delete reviews[user];
+  }
+  
+  res.send(`Review for ISBN ${isbn} posted by ${user} deleted`);
+})
 
 module.exports.authenticated = regd_users;
 module.exports.isValid = isValid;
